@@ -1,0 +1,284 @@
+﻿@model IEnumerable<ExpenseTracker.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<div class="container expense-page">
+
+    <div class="dashboard-hero">
+
+        <div>
+
+            <div class="dashboard-eyebrow">
+                FINANCIAL ACTIVITY
+            </div>
+
+            <h1>
+                Transactions
+            </h1>
+
+            <p>
+                View and manage your income and expenses.
+            </p>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="expense-btn expense-btn-primary">
+
+            <span class="button-plus">+</span>
+
+            Add Transaction
+
+        </a>
+
+    </div>
+
+
+    @if (Model.Any())
+    {
+
+        <div class="transactions-container">
+
+            <div class="table-responsive">
+
+                <table class="table modern-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Transaction
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var transaction in Model)
+                        {
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="table-transaction">
+
+                                        <div class="table-avatar
+                                                    @(transaction.Type == "Income"
+                                                                                             ? "avatar-income"
+                                                                                             : "avatar-expense")">
+
+                                    @if (transaction.Type == "Income")
+                                            {
+                                                <span>↑</span>
+                                            }
+                                            else
+                                            {
+                                                <span>↓</span>
+                                            }
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="table-description">
+
+                                                @transaction.Description
+
+                                            </div>
+
+
+                                            @if (!string.IsNullOrWhiteSpace(transaction.Notes))
+                                            {
+
+                                                <div class="table-notes">
+
+                                                    @transaction.Notes
+
+                                                </div>
+
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="category-pill">
+
+                                        @transaction.Category
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (transaction.Type == "Income")
+                                    {
+
+                                        <span class="type-badge type-income">
+
+                                            Income
+
+                                        </span>
+
+                                    }
+                                    else
+                                    {
+
+                                        <span class="type-badge type-expense">
+
+                                            Expense
+
+                                        </span>
+
+                                    }
+
+                                </td>
+
+
+                                <td class="table-date">
+
+                                    @transaction.Date.ToString("dd MMM yyyy")
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (transaction.Type == "Income")
+                                    {
+
+                                        <strong class="amount-income">
+
+                                            +R @transaction.Amount.ToString("N2")
+
+                                        </strong>
+
+                                    }
+                                    else
+                                    {
+
+                                        <strong class="amount-expense">
+
+                                            -R @transaction.Amount.ToString("N2")
+
+                                        </strong>
+
+                                    }
+
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <div class="table-actions">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@transaction.Id"
+                                           class="table-action view">
+
+                                            View
+
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@transaction.Id"
+                                           class="table-action edit">
+
+                                            Edit
+
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@transaction.Id"
+                                           class="table-action delete">
+
+                                            Delete
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    }
+    else
+    {
+
+        <div class="dashboard-panel">
+
+            <div class="expense-empty">
+
+                <div class="empty-icon">
+                    $
+                </div>
+
+                <h3>
+                    No transactions yet
+                </h3>
+
+                <p>
+                    Add your first transaction to start tracking your finances.
+                </p>
+
+                <a asp-action="Create"
+                   class="expense-btn expense-btn-primary">
+
+                    Add Transaction
+
+                </a>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>

@@ -1,0 +1,202 @@
+﻿@model ExpenseTracker.Models.Transaction
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<div class="container expense-page">
+
+    <div class="dashboard-hero">
+
+        <div>
+
+            <div class="dashboard-eyebrow">
+                TRANSACTION
+            </div>
+
+            <h1>
+                Transaction Details
+            </h1>
+
+            <p>
+                View the complete information for this transaction.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="details-card">
+
+        <div class="details-top">
+
+            <div class="details-avatar
+                @(Model.Type == "Income"
+                                     ? "avatar-income"
+                                     : "avatar-expense")">
+
+                @if (Model.Type == "Income")
+                {
+                    <span>↑</span>
+                }
+                else
+                {
+                    <span>↓</span>
+                }
+
+            </div>
+
+
+            <div>
+
+                <div class="details-category">
+                    @Model.Category
+                </div>
+
+                <h2>
+                    @Model.Description
+                </h2>
+
+                <div class="details-date">
+                    @Model.Date.ToString("dd MMMM yyyy")
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-amount
+            @(Model.Type == "Income"
+                             ? "amount-income"
+                             : "amount-expense")">
+
+            @if (Model.Type == "Income")
+            {
+                <span>
+                    +R @Model.Amount.ToString("N2")
+                </span>
+            }
+            else
+            {
+                <span>
+                    -R @Model.Amount.ToString("N2")
+                </span>
+            }
+
+        </div>
+
+
+        <div class="details-grid">
+
+            <div class="details-item">
+
+                <span>
+                    Type
+                </span>
+
+                @if (Model.Type == "Income")
+                {
+
+                    <strong class="type-badge type-income">
+                        Income
+                    </strong>
+
+                }
+                else
+                {
+
+                    <strong class="type-badge type-expense">
+                        Expense
+                    </strong>
+
+                }
+
+            </div>
+
+
+            <div class="details-item">
+
+                <span>
+                    Category
+                </span>
+
+                <strong>
+                    @Model.Category
+                </strong>
+
+            </div>
+
+
+            <div class="details-item">
+
+                <span>
+                    Date
+                </span>
+
+                <strong>
+                    @Model.Date.ToString("dd MMMM yyyy")
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-notes">
+
+            <span>
+                Notes
+            </span>
+
+            @if (string.IsNullOrWhiteSpace(Model.Notes))
+            {
+
+                <p class="muted-text">
+                    No notes were added.
+                </p>
+
+            }
+            else
+            {
+
+                <p>
+                    @Model.Notes
+                </p>
+
+            }
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="expense-btn expense-btn-primary">
+
+                Edit Transaction
+
+            </a>
+
+            <a asp-action="Delete"
+               asp-route-id="@Model.Id"
+               class="expense-btn expense-btn-danger">
+
+                Delete
+
+            </a>
+
+            <a asp-action="Index"
+               class="expense-btn expense-btn-secondary">
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

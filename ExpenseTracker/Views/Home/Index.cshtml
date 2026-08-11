@@ -1,0 +1,575 @@
+﻿@model ExpenseTracker.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container expense-page">
+
+    <!-- Dashboard Header -->
+
+    <div class="dashboard-hero">
+
+        <div>
+
+            <div class="dashboard-eyebrow">
+                FINANCIAL DASHBOARD
+            </div>
+
+            <h1>
+                Financial Overview
+            </h1>
+
+            <p>
+                Track your income, expenses and spending habits.
+            </p>
+
+        </div>
+
+
+        <a asp-controller="Transactions"
+           asp-action="Create"
+           class="expense-btn expense-btn-primary">
+
+            <span class="button-plus">+</span>
+
+            Add Transaction
+
+        </a>
+
+    </div>
+
+
+    <!-- Summary Cards -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- Balance -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="finance-card balance-card">
+
+                <div class="finance-card-top">
+
+                    <div>
+
+                        <div class="finance-card-label">
+                            CURRENT BALANCE
+                        </div>
+
+                        <div class="finance-card-title">
+                            Available Balance
+                        </div>
+
+                    </div>
+
+                    <div class="finance-icon finance-icon-purple">
+                        $
+                    </div>
+
+                </div>
+
+
+                <div class="finance-card-value">
+
+                    R @Model.Balance.ToString("N2")
+
+                </div>
+
+
+                <div class="finance-card-footer">
+
+                    <span class="finance-footer-dot"></span>
+
+                    Income minus expenses
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Income -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="finance-card">
+
+                <div class="finance-card-top">
+
+                    <div>
+
+                        <div class="finance-card-label">
+                            TOTAL INCOME
+                        </div>
+
+                        <div class="finance-card-title">
+                            Money Received
+                        </div>
+
+                    </div>
+
+                    <div class="finance-icon finance-icon-green">
+                        ↑
+                    </div>
+
+                </div>
+
+
+                <div class="finance-card-value finance-income">
+
+                    +R @Model.TotalIncome.ToString("N2")
+
+                </div>
+
+
+                <div class="finance-card-footer">
+
+                    <span class="finance-footer-dot finance-dot-green"></span>
+
+                    Total income recorded
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Expenses -->
+
+        <div class="col-lg-4 col-md-6">
+
+            <div class="finance-card">
+
+                <div class="finance-card-top">
+
+                    <div>
+
+                        <div class="finance-card-label">
+                            TOTAL EXPENSES
+                        </div>
+
+                        <div class="finance-card-title">
+                            Money Spent
+                        </div>
+
+                    </div>
+
+                    <div class="finance-icon finance-icon-red">
+                        ↓
+                    </div>
+
+                </div>
+
+
+                <div class="finance-card-value finance-expense">
+
+                    -R @Model.TotalExpenses.ToString("N2")
+
+                </div>
+
+
+                <div class="finance-card-footer">
+
+                    <span class="finance-footer-dot finance-dot-red"></span>
+
+                    Total expenses recorded
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Main Dashboard -->
+
+    <div class="row g-4">
+
+
+        <!-- Spending -->
+
+        <div class="col-lg-6">
+
+            <div class="dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <div class="panel-eyebrow">
+                            ANALYTICS
+                        </div>
+
+                        <h2>
+                            Spending by Category
+                        </h2>
+
+                        <p>
+                            See where your money is going.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-panel-body">
+
+                    @if (Model.ExpensesByCategory.Any())
+                    {
+
+                        <div class="expense-chart-container">
+
+                            <canvas id="expenseChart"></canvas>
+
+                        </div>
+
+                    }
+                    else
+                    {
+
+                        <div class="expense-empty">
+
+                            <div class="empty-icon">
+                                ◌
+                            </div>
+
+                            <h3>
+                                No expense data yet
+                            </h3>
+
+                            <p>
+                                Add an expense to see your spending breakdown.
+                            </p>
+
+                            <a asp-controller="Transactions"
+                               asp-action="Create"
+                               class="expense-btn expense-btn-primary">
+
+                                Add Expense
+
+                            </a>
+
+                        </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent Transactions -->
+
+        <div class="col-lg-6">
+
+            <div class="dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <div class="panel-eyebrow">
+                            ACTIVITY
+                        </div>
+
+                        <h2>
+                            Recent Transactions
+                        </h2>
+
+                        <p>
+                            Your latest financial activity.
+                        </p>
+
+                    </div>
+
+
+                    <a asp-controller="Transactions"
+                       asp-action="Index"
+                       class="expense-btn expense-btn-secondary">
+
+                        View All
+
+                    </a>
+
+                </div>
+
+
+                <div class="dashboard-panel-body">
+
+                    @if (Model.RecentTransactions.Any())
+                    {
+
+                        <div class="modern-transaction-list">
+
+                            @foreach (var transaction in Model.RecentTransactions)
+                            {
+
+                                <div class="modern-transaction">
+
+                                    <div class="transaction-left">
+
+                                        <div class="transaction-avatar
+                                                    @(transaction.Type == "Income"
+                                                                                             ? "avatar-income"
+                                                                                             : "avatar-expense")">
+
+                                    @if (transaction.Type == "Income")
+                                            {
+                                                <span>↑</span>
+                                            }
+                                            else
+                                            {
+                                                <span>↓</span>
+                                            }
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="modern-transaction-name">
+
+                                                @transaction.Description
+
+                                            </div>
+
+                                            <div class="modern-transaction-meta">
+
+                                                @transaction.Category
+
+                                                <span>•</span>
+
+                                                @transaction.Date.ToString("dd MMM yyyy")
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="transaction-right">
+
+                                        @if (transaction.Type == "Income")
+                                        {
+
+                                            <div class="modern-amount amount-income">
+
+                                                +R @transaction.Amount.ToString("N2")
+
+                                            </div>
+
+                                        }
+                                        else
+                                        {
+
+                                            <div class="modern-amount amount-expense">
+
+                                                -R @transaction.Amount.ToString("N2")
+
+                                            </div>
+
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            }
+
+                        </div>
+
+                    }
+                    else
+                    {
+
+                        <div class="expense-empty">
+
+                            <div class="empty-icon">
+                                $
+                            </div>
+
+                            <h3>
+                                No transactions yet
+                            </h3>
+
+                            <p>
+                                Add your first transaction to get started.
+                            </p>
+
+                            <a asp-controller="Transactions"
+                               asp-action="Create"
+                               class="expense-btn expense-btn-primary">
+
+                                Add Transaction
+
+                            </a>
+
+                        </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    @if (Model.ExpensesByCategory.Any())
+    {
+
+        <script>
+
+            const categoryLabels =
+                @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(
+                            Model.ExpensesByCategory.Keys
+                    )
+                );
+
+
+    const categoryValues =
+        @Html.Raw(
+                        System.Text.Json.JsonSerializer.Serialize(
+                                Model.ExpensesByCategory.Values
+                        )
+                );
+
+
+    const ctx =
+        document.getElementById("expenseChart");
+
+
+    new Chart(ctx, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: categoryLabels,
+
+            datasets: [
+                {
+                    data: categoryValues,
+
+                    backgroundColor: [
+                        "#6366f1",
+                        "#8b5cf6",
+                        "#ec4899",
+                        "#06b6d4",
+                        "#22c55e",
+                        "#f59e0b",
+                        "#ef4444",
+                        "#14b8a6",
+                        "#f97316"
+                    ],
+
+                    borderColor: "#111726",
+
+                    borderWidth: 4,
+
+                    hoverOffset: 8
+                }
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "70%",
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom",
+
+                    labels: {
+
+                        color: "#aeb6c8",
+
+                        padding: 18,
+
+                        usePointStyle: true,
+
+                        pointStyle: "circle",
+
+                        font: {
+                            size: 12,
+                            weight: "600"
+                        }
+
+                    }
+
+                },
+
+                tooltip: {
+
+                    backgroundColor: "#151c2d",
+
+                    titleColor: "#ffffff",
+
+                    bodyColor: "#cbd2e1",
+
+                    borderColor:
+                        "rgba(255,255,255,0.08)",
+
+                    borderWidth: 1,
+
+                    padding: 12,
+
+                    callbacks: {
+
+                        label: function (context) {
+
+                            return " R " +
+                                Number(context.raw)
+                                    .toLocaleString(
+                                        "en-ZA",
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+    }
+
+}
